@@ -1,0 +1,49 @@
+  This is another exercise in recursive programming for those who would like a
+challenge. It is an extension to the previous two. Consider the following setup:
+     -An l_expr is any one of the following:
+         -An integer
+	 -A variable
+         -(op e_1 e_2) where op is an operator and e_1, e_2 are l_exprs
+	 -((LAMBDA (x) e_1) e_2) where x is a variable and e_1, e_2 are l_exprs
+     -An operator is any of the following:
+         -+, *, -
+         -/, meaning integer division
+         -%, meaning modulus
+         -pow, where pow a b is understood as a raised to the power b
+  We might display this information in the following manner:
+      l_expr	<- [0-9][0-9]*
+		  | (op l_expr l_expr)
+		  | name
+		  | (func l_expr)
+		  | func
+      op	<- + | * | - | / | % | pow
+      name	<- [a-z][a-z]*
+      func	<- (LAMBDA (name) l_expr)
+  The object of this challenge is to extend the expr class even further; we're
+working towards turning it into a full programming language. So how does this
+lambda thingy work? Well, lambda is a function definiton that acts in the
+following way. ((LAMBDA (x) E) F) should return the expression obtained by
+setting the variable "x" equal to the expression F inside the expression E.
+There are some scoping issues here (what happens if there are "x"s in F?) but
+you should ignore these for now, unless you really want to clean them up. You
+can assume, therefore, that every LAMBDA defines a uniquely named variable, and
+that this variable will only show up within the inner expression of the lambda.
+Notice that functions themselves are valid l_exprs, so you may have a function
+which returns another function.
+  As this is meant to be an interesting problem for you to think about, I will
+not specify what your class hierarchy should look like. Of course, feel free to
+ask me about it in office hours.
+
+Examples:
+  Any l_expr which does not have a LAMBDA should contain no variables, and work
+    exactly as if it were an expr from the first case.
+  ((LAMBDA (x) (+ x 1)) 5) should simplify to 6, since the expression (+ x 1)
+    is evaluated after setting x to be equal to 5.
+  ((LAMBDA (x) (+ x 1)) (* 3 4)) should evaluate to 13.
+  (LAMBDA (x) (+ x 1)) is the function which takes a single argument, and
+    evaluates as a number one larger.
+  ((LAMBDA (y) ((LAMBDA (x) (- x y)) 4)) 3) parses like this:
+    ((LAMBDA (y) ((LAMBDA (x) (- x y)) 4)) 3)
+    => ((LAMBDA (x) (- x 3)) 4)
+    => (- 4 3)
+    => 1

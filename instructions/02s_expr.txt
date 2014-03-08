@@ -1,0 +1,34 @@
+  This is another exercise in recursive programming for those who would like a
+challenge. It is an extension to the previous one. Consider the following setup:
+     -An s_expr is any one of the following:
+         -An integer
+	 -A variable
+         -(op e_1 e_2) where op is an operator and e_1, e_2 are expressions 
+     -An operator is any of the following:
+         -+, *, -
+         -/, meaning integer division
+         -%, meaning modulus
+         -pow, where pow a b is understood as a raised to the power b
+  We might display this information in the following manner:
+      expr	<- [0-9][0-9]*
+		  | (op expr expr)
+		  | name
+      op	<- + | * | - | / | % | pow
+      name	<- [a-z][a-z]*
+  The object of this challenge is to extend the expr class to be able to handle
+expressions with variables in them, and write a function which will reduce an
+expression by evaluating it by assigning a given value to a given variable. You
+should also write a simplify function, which simplifies an expression as much as
+it can without knowing the value of any of the variables.
+  As this is meant to be an interesting problem for you to think about, I will
+not specify what your class hierarchy should look like. Of course, feel free to
+ask me about it in office hours.
+
+Examples:
+  Any s_expr which is also an expr should simplify to its value
+  Evaluating a simplified s_expr by assigning a value to a variable it doesn't
+    contain should not modify it
+  If E is the expression (+ x 2) then eval( E, x, 2 ) should return 4. On
+    the other hand, eval( E, y, 2 ) should return (+ x 2).
+  If E is the expression (+ x (- 5 y)) then eval( E, y, 3 ) should return
+    the expression (+ x 2).

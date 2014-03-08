@@ -1,0 +1,30 @@
+  This is an exercise in recursive programming for those who would like a
+challenge. Consider the following setup:
+     -An expr is any one of the following:
+         -An integer
+         -(op e_1 e_2) where op is an operator and e_1, e_2 are expressions 
+     -An operator is any of the following:
+         -+, *, -
+         -/, meaning integer division
+         -%, meaning modulus
+         -pow, where pow a b is understood as a raised to the power b
+  We might sometimes display this information in the following manner:
+      expr	<- [0-9][0-9]* | (op expr expr)
+      op	<- + | * | - | / | % | pow
+Here the "|" character corresponds to an "or", and the idea is that given an
+expr we can continually replace things that occur on the left with
+corresponding things on the right until we have nothing that can be replaced
+any more, at which point we have a valid expression.
+  The object of this challenge is to write an expr class with an overloaded
+operator >> that will read an expression from input, and a function eval
+which will compute the numeric value of the expression. Then play around with
+it a bit, or make it do something like ask the user for input and print out
+the value of their expression, like a simple calculator might.
+  As this is meant to be an interesting problem for you to think about, I will
+not specify what your class hierarchy should look like. Of course, feel free to
+ask me about it in office hours.
+
+Examples:
+  4 should evaluate as 4
+  (+ 2 3) should evaluate as 5
+  (+ (* 2 (/ 5 2)) (pow 2 8)) should evaluate as 4 + 256, i.e., 260

@@ -1,0 +1,106 @@
+  This is another exercise in recursive programming for those who would like a
+challenge. It is an extension to those previous. Consider the following setup:
+     -A program is the following:
+         -An l_expr followed by a program
+         -A definition followed by a program
+         -Nothing
+     -An l_expr is any one of the following:
+         -An integer
+	 -A variable
+         -A function
+         -(op e_1 e_2) where op is an operator and e_1, e_2 are l_exprs
+	 -((LAMBDA (x) e_1) e_2) where x is a variable and e_1, e_2 are l_exprs
+         -A list, which may be EMPTY
+         -(CAR list), which evaluates as the first element of the list
+         -(CDR list), which evaluates as the list without its first element
+         -(IF condition e_1 e_2) which evaluates as e_1 if condition is anything
+           except the empty list, and e_2 in that case (we are thinking of the
+           empty list as meaning "false", and anything else as "true").
+     -A definition is the following:
+         -(DEF name l_expr)
+     -An operator is any of the following:
+         -+, *, -
+         -/, meaning integer division
+         -%, meaning modulus
+         -pow, where pow a b is understood as a raised to the power b
+         -< and > which take two arguments and compare the first to the second
+         -AND which takes two arguments and returns the empty list if one of the
+           arguments is the empty list, and anything else otherwise
+         -OR which is similar, but as OR instead
+         -EQUAL? which returns the empty list if its two expressions are not the
+           same
+     -A list is either EMPTY, or else a l_expr followed by a list.
+  We now require that to be valid, an l_expr contains no variable names that are
+not defined either in definitions in the program, or in lambdas of which the
+definition is part. This condition may be assumed, as actually checking it is
+challenging. We also require that if an l_expr is actually being evaluated that
+all definitions it requires have already been given.
+  We might display this information in the following manner:
+      p_expr	<-  l_expr \n p_expr
+		  | def \n p_expr
+		  |
+      l_expr	<-  [0-9][0-9]*
+		  | (op l_expr l_expr)
+		  | name
+		  | list
+		  | (func l_expr)
+		  | func
+		  | (CAR (CONS l_expr list))
+		  | (CDR (CONS l_expr list))
+		  | (IF l_expr l_expr l_expr)
+      list	<-  (CONS l_expr list)
+		  | EMPTY
+      op	<-  + | * | - | / | % | pow | < | > | AND | OR | EQUAL?
+      name	<-  [a-z][a-z]*
+      func	<-  (LAMBDA (name) l_expr)
+      def	<-  (DEF name l_expr)
+  So now we are allowing someone to define a bunch of functions and call them to
+evaluate things. We have also defined a new data type, which is a list. Finally,
+we have defined an IF clause. It should check if the first l_expr evaluates to
+EMPTY, the EMPTY list; if it does, it should evaluate as the third l_expr, and
+otherwise, as the second. We have also added <, >, AND, OR, and EQUAL? which
+should return the empty list EMPTY if they evaluate to false on the two l_exprs
+which they are passed. CAR should take a non-empty list, i.e.,
+(CONS l_expr list), and return the l_expr; CDR should return the rest of the
+list, so list.
+  There is a very tricky issue here with replacement of identifiers. Namely, we
+may wind up calling a function multiple times through recursion when parsing
+something, or may have one function call another that happens to use the same
+variable names. This is a tricky problem to solve. Think about it for a while,
+or come ask me for help.
+  As this is meant to be an interesting problem for you to think about, I will
+not specify what your class hierarchy should look like. Of course, feel free to
+ask me about it in office hours.
+
+Examples:
+  Here is a program which sorts a list.
+    (DEF merge
+      (LAMBDA (x) (LAMBDA (y)
+        (IF x
+          (IF y
+            (IF (< (CAR x) (CAR y))
+              (CONS (CAR x) ((merge (CDR x)) y))
+              (CONS (CAR y) ((merge x) (CDR y))))
+            x)
+          y))))
+    (DEF evens
+      (LAMBDA (somelist)
+        (IF somelist
+          (odds (CDR somelist))
+          EMPTY)))
+    (DEF odds
+      (LAMBDA (somelist)
+        (IF somelist
+          (CONS (CAR somelist) (evens (CDR somelist)))
+          EMPTY)))
+    (DEF sort
+      (LAMBDA (alist)
+        (IF alist
+          (IF (CDR alist)
+            ((merge (sort (evens alist))) (sort (odds alist)))
+            alist)
+          EMPTY)))
+    (sort (CONS 3 (CONS 8 (CONS 2 (CONS 128 (CONS (pow 2 4) EMPTY))))))
+  The output of evaluating the final expression should be the following (sorted)
+  list:
+    (CONS 2 (CONS 3 (CONS 8 (CONS 16 (CONS 128 EMPTY)))))
